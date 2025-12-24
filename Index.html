@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Orrery - 3D Solar System</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
+        }
+        canvas {
+            display: block;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #333;
+            border-top: 3px solid #4A90E2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #status {
+            font-size: 14px;
+            margin-top: 10px;
+            color: #888;
+        }
+        
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            max-width: 300px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #info h2 {
+            margin: 0 0 10px 0;
+            font-size: 18px;
+            color: #4A90E2;
+        }
+        
+        #info p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+        
+        #console-output {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: #0f0;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 400px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 150;
+        }
+        
+        .log-error { color: #f44; }
+        .log-success { color: #0f0; }
+        .log-info { color: #4af; }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="loading-spinner"></div>
+        <div>🌌 Loading Solar System...</div>
+        <div id="status">Initializing Three.js</div>
+    </div>
+    
+    <!-- Info moved to collapsible panel in each mode -->
+    
+    <div id="console-output"></div>
+    
+    <script type="module">
+        // Custom logger to show progress
+        const consoleDiv = document.getElementById('console-output');
+        const statusDiv = document.getElementById('status');
+        
+        function log(message, type = 'info') {
+            console.log(message);
+            const line = document.createElement('div');
+            line.className = `log-${type}`;
+            line.textContent = message;
+            consoleDiv.appendChild(line);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            
+            statusDiv.textContent = message;
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+        
+        // Start initialization
+        log('Step 1: Loading Three.js...', 'info');
+        
+        try {
+            // Import Three.js with timeout
+            const threePromise = import('https://cdn.skypack.dev/pin/three@v0.128.0-RUwHhyqazSQDSNE4T73c/mode=imports/optimized/three.js');
+            
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Three.js loading timeout')), 10000)
+            );
+            
+            const THREE = await Promise.race([threePromise, timeoutPromise]);
+            
+            log('✅ Three.js loaded (v' + THREE.REVISION + ')', 'success');
+            window.THREE = THREE;
+            
+            // Test Three.js
+            log('Step 2: Testing Three.js...', 'info');
+            const testScene = new THREE.Scene();
+            log('✅ Three.js working correctly', 'success');
+            
+            // Import application
+            log('Step 3: Loading application modules...', 'info');
+            const { bootstrap } = await import("./src/main.js");
+            log('✅ Application modules loaded', 'success');
+            
+            // Start application
+            log('Step 4: Starting Solar Orrery...', 'info');
+            bootstrap();
+            log('✅ Solar Orrery started successfully!', 'success');
+            log('🎮 Use mouse to interact', 'info');
+            
+            // Hide loading screen
+            setTimeout(hideLoading, 1000);
+            
+        } catch (error) {
+            log('❌ ERROR: ' + error.message, 'error');
+            log('Stack: ' + error.stack, 'error');
+            console.error('Detailed error:', error);
+            
+            // Show specific error guidance
+            if (error.message.includes('Failed to fetch')) {
+                log('⚠️ Network error - check your internet connection', 'error');
+            } else if (error.message.includes('module')) {
+                log('⚠️ Module error - check file paths', 'error');
+            } else if (error.message.includes('timeout')) {
+                log('⚠️ Loading timeout - try refreshing', 'error');
+            }
+            
+            statusDiv.textContent = '❌ Error: ' + error.message;
+            statusDiv.style.color = '#f44';
+        }
+        
+        // Global error handler
+        window.addEventListener('error', (event) => {
+            log('❌ Global error: ' + event.error?.message, 'error');
+        });
+        
+        window.addEventListener('unhandledrejection', (event) => {
+            log('❌ Promise rejection: ' + event.reason?.message, 'error');
+        });
+    </script>
+</body>
+</html>
