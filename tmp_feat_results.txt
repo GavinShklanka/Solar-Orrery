@@ -1,0 +1,20 @@
+Rows after cleaning: 254223
+Feature count: 30
+
+Top 15 Features:
+          feature  importance
+    flow_pressure         392
+solar_cycle_phase         358
+               Kp         356
+         B_scalar         354
+  newell_coupling         324
+       flow_speed         282
+           Bx_GSE         271
+           Bz_GSM         235
+flow_speed_lag24h         220
+           By_GSM         212
+         Kp_lag3h         203
+    Bz_GSM_lag24h         198
+     Bz_GSM_lag2h         190
+     Bz_GSM_lag3h         188
+    Bz_GSM_lag12h         184

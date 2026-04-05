@@ -1,0 +1,29 @@
+{
+  "status": "loaded",
+  "total_records": 262992,
+  "first_record": "1996-01-01 00:00:00+00:00",
+  "last_record": "2025-12-31 23:00:00+00:00",
+  "missing_pct": {
+    "Bz_GSM": 0.25,
+    "flow_speed": 0.45,
+    "proton_density": 2.23,
+    "Kp": 0.0
+  },
+  "columns": [
+    "B_scalar",
+    "Bx_GSE",
+    "By_GSE",
+    "Bz_GSE",
+    "By_GSM",
+    "Bz_GSM",
+    "proton_temp",
+    "proton_density",
+    "flow_speed",
+    "flow_pressure",
+    "alfven_mach",
+    "Kp",
+    "sunspot_number",
+    "Dst",
+    "ap_index"
+  ]
+}

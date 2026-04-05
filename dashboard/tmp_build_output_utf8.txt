@@ -1,0 +1,51 @@
+﻿node : file:///C:/Users/gshk
+0/.gemini/antigravity/scratc
+h/vela/dashboard/tmp_build.j
+s:1
+At line:1 char:1
++ node tmp_build.js 2>&1 > 
+tmp_build_output.txt
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: (file:  
+  ///C:/User.../tmp_build   
+ .js:1:String) [], Remot    
+eException
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+const { execSync } = 
+require('child_process');
+                     ^
+
+ReferenceError: require is 
+not defined in ES module 
+scope, you can use import 
+instead
+This file is being treated 
+as an ES module because it 
+has a '.js' file extension 
+and 'C:\Users\gshk0\.gemini\
+antigravity\scratch\vela\das
+hboard\package.json' 
+contains "type": "module". 
+To treat it as a CommonJS 
+script, rename it to use 
+the '.cjs' file extension.
+    at file:///C:/Users/gshk
+0/.gemini/antigravity/scratc
+h/vela/dashboard/tmp_build.j
+s:1:22
+    at ModuleJob.run (node:i
+nternal/modules/esm/module_j
+ob:345:25)
+    at async onImport.traceP
+romise.__proto__ (node:inter
+nal/modules/esm/loader:665:2
+6)
+    at async asyncRunEntryPo
+intWithESMLoader (node:inter
+nal/modules/run_main:117:5)
+
+Node.js v22.20.0

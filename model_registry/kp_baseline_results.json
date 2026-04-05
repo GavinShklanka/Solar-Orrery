@@ -1,0 +1,21 @@
+{
+  "train_rmse": 0.701,
+  "test_rmse": 0.7932,
+  "quiet_rmse": 0.7567,
+  "storm_rmse": 1.3922,
+  "storm_precision": 0.7102,
+  "storm_recall": 0.3548,
+  "storm_f1": 0.4732,
+  "persistence_rmse": 0.8649,
+  "skill_score": 0.1589,
+  "n_storms_test": 1195,
+  "n_train": 163116,
+  "n_val": 40778,
+  "n_test": 50329,
+  "best_iteration": 230,
+  "target_horizon": "3h",
+  "train_period": "1996-01-28 00:00:00+00:00 to 2019-12-31 23:00:00+00:00",
+  "test_period": "2020-01-01 00:00:00+00:00 to 2025-12-31 20:00:00+00:00",
+  "last_trained": "2026-04-04T21:35:47.001350+00:00",
+  "model_version": "kp_baseline_lgbm_v2"
+}

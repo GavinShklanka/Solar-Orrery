@@ -1,0 +1,33 @@
+# Vela Backend Dependencies
+
+# API Framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+
+# HTTP Client
+httpx>=0.27.0
+aiohttp>=3.9.0
+
+# Orbital Propagation (server-side)
+skyfield>=1.48
+
+# Data Processing
+pandas>=2.1.0
+numpy>=1.26.0
+polars>=0.20.0
+
+# ML Pipeline (Phase 3)
+scikit-learn>=1.4.0
+# torch>=2.2.0  # Uncomment for Phase 3 LSTM
+# xgboost>=2.0.0  # Uncomment for Phase 3 baseline
+
+# Scheduling
+apscheduler>=3.10.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0

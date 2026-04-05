@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --surface-void: #060912;
+  --surface-base: #0A0E1A;
+  --surface-raised: #0F1628;
+  --surface-overlay: #141C35;
+  --surface-panel: #F2F4F7;
+  --surface-panel-dim: #E8EBF0;
+  --surface-border: rgba(255, 255, 255, 0.07);
+
+  --accent-primary: #3B82F6;
+  --accent-secondary: #6366F1;
+  --accent-warning: #F59E0B;
+  --status-critical: #EF4444;
+  --status-safe: #10B981;
+
+  --font-ui: 'Inter', -apple-system, sans-serif;
+  --font-data: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--surface-void);
+  color: #fff;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Layout Classes */
+.vela-app {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.vela-nav {
+  width: 200px;
+  background: var(--surface-base);
+  border-right: 1px solid var(--surface-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.vela-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-void);
+  position: relative;
+  overflow: hidden;
+}
+
+.vela-topbar {
+  height: 48px;
+  background: var(--surface-base);
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 40;
+}
+
+.vela-content {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Utility Classes */
+.vela-panel {
+  background: var(--surface-raised);
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.vela-panel-light {
+  background: var(--surface-panel);
+  color: #000;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.vela-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+
+.vela-metric {
+  font-family: var(--font-data);
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.vela-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Live Pulse Animation */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 0; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+.live-pulse {
+  width: 8px;
+  height: 8px;
+  background: var(--status-critical);
+  border-radius: 50%;
+  position: relative;
+}
+
+.live-pulse::after {
+  content: '';
+  position: absolute;
+  top: -2px; left: -2px; right: -2px; bottom: -2px;
+  background: transparent;
+  border: 2px solid var(--status-critical);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Entrance Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Recharts Overrides */
+.recharts-cartesian-grid-horizontal line {
+  stroke: rgba(255,255,255,0.05);
+}
+.recharts-cartesian-grid-vertical line {
+  display: none;
+}
+.recharts-text {
+  font-family: var(--font-ui) !important;
+  fill: rgba(255,255,255,0.4) !important;
+  font-size: 11px !important;
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: var(--surface-overlay) !important;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: 4px;
+  padding: 12px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.recharts-tooltip-item {
+  color: #fff !important;
+  font-family: var(--font-data) !important;
+  font-size: 12px;
+  padding: 2px 0 !important;
+}
+.recharts-tooltip-label {
+  color: rgba(255,255,255,0.5) !important;
+  font-family: var(--font-ui) !important;
+  font-size: 11px;
+  margin-bottom: 8px !important;
+}
