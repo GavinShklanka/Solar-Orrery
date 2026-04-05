@@ -2,7 +2,7 @@
 Orbital routes — Live satellite positions from TLE data.
 """
 from fastapi import APIRouter, HTTPException
-from api.state import scheduler
+from state import scheduler
 
 router = APIRouter()
 

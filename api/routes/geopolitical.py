@@ -3,7 +3,7 @@ Geopolitical routes — Nation power index, launch history, payload ownership.
 Phase 1: Stub endpoints. Full implementation in Phase 2.
 """
 from fastapi import APIRouter
-from api.state import scheduler
+from state import scheduler
 
 router = APIRouter()
 

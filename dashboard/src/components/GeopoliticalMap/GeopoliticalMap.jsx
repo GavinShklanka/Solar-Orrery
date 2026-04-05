@@ -1,7 +1,20 @@
+/**
+ * GeopoliticalMap.jsx — Vela Geopolitical Space Power Index (Meridian V2)
+ * 
+ * Hero metric strip + left stacked area + right column (commercialization line + UCS bars).
+ * Nation callouts at bottom with flags.
+ * 
+ * PRESERVED DATA (non-negotiable):
+ * - Launch totals: USA 2,276 | USSR/Russia 3,099 | China 726
+ * - Commercial 80.4%, Government 7.4%, Military 6.1%, Civil 2.1%
+ * - Decade breakdown 1950s 0% → 2020s 38.6% commercial
+ * - UCS: 7,560 active satellites, 99.92% join rate
+ */
+
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, LineChart, Line, BarChart, Bar, ReferenceLine,
+  ResponsiveContainer, LineChart, Line, ReferenceLine,
   Legend,
 } from 'recharts';
 
@@ -11,12 +24,24 @@ const NATION_COLORS = {
   China: '#F59E0B',
   Europe: '#10B981',
   India: '#6366F1',
-  Other: 'rgba(255,255,255,0.3)',
+  Japan: '#8B5CF6',
+  Other: 'rgba(255,255,255,0.2)',
 };
 
+const COMMERCIALIZATION_DECADES = [
+  { decade: '1950s', share: 0 },
+  { decade: '1960s', share: 0.3 },
+  { decade: '1970s', share: 1.2 },
+  { decade: '1980s', share: 3.1 },
+  { decade: '1990s', share: 4.8 },
+  { decade: '2000s', share: 19.3 },
+  { decade: '2010s', share: 30.8 },
+  { decade: '2020s', share: 38.6 },
+];
+
 const tooltipStyle = {
-  backgroundColor: 'var(--surface-overlay)',
-  borderColor: 'var(--surface-border)',
+  backgroundColor: '#141C35',
+  borderColor: 'rgba(255,255,255,0.07)',
   color: '#f8fafc',
   borderRadius: '6px',
   fontSize: '12px',
@@ -82,13 +107,13 @@ export default function GeopoliticalMap() {
   }, [data]);
 
   if (loading) {
-    return <div style={{ color: 'var(--accent-primary)', padding: '24px' }}>Loading geopolitical intelligence crosswalk...</div>;
+    return <div style={{ color: 'var(--accent-primary)', padding: '24px', fontFamily: 'var(--font-data)', fontSize: '12px' }}>Loading geopolitical intelligence crosswalk...</div>;
   }
 
   if (error || !data?.nations_series) {
     return (
-      <div style={{ color: 'var(--status-critical)', padding: '24px' }}>
-        <div style={{ fontSize: '10px', textTransform: 'uppercase' }}>Geopolitical Intelligence</div>
+      <div style={{ padding: '24px', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
+        <div style={{ fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px' }}>Geopolitical Intelligence</div>
         <div>{error || 'Data unavailable'}</div>
       </div>
     );
@@ -96,7 +121,7 @@ export default function GeopoliticalMap() {
 
   return (
     <div style={{ height: '100%', overflow: 'auto', padding: '24px' }}>
-      {/* ═══ HEADER METRIC STRIP ═════════════════════════════════════════════ */}
+      {/* ═══ HERO METRIC STRIP ═══════════════════════════════════════════════ */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
         background: 'var(--surface-raised)', border: '1px solid var(--surface-border)',
@@ -111,7 +136,7 @@ export default function GeopoliticalMap() {
       {!data.ucs_applied && (
         <div style={{
           padding: '8px 16px',
-          background: 'rgba(245,158,11,0.1)',
+          background: 'rgba(245,158,11,0.08)',
           border: '1px solid rgba(245,158,11,0.2)',
           borderRadius: '4px',
           fontSize: '11px', color: 'var(--accent-warning)',
@@ -124,10 +149,10 @@ export default function GeopoliticalMap() {
       {/* ═══ TWO-PANEL GRID ═══════════════════════════════════════════════════ */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px' }}>
 
-        {/* Left — Launch Cadence */}
+        {/* Left — Launch Cadence Stacked Area */}
         <div className="vela-panel">
           <div className="vela-label" style={{ marginBottom: '24px' }}>
-            Global Orbital Launch Cadence 1957–2025
+            Global Orbital Launch Cadence · 1957–2025
           </div>
           <div style={{ height: '420px' }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -156,137 +181,115 @@ export default function GeopoliticalMap() {
             </ResponsiveContainer>
           </div>
 
+          {/* Nation Rankings */}
           <div style={{ marginTop: '24px', borderTop: '1px solid var(--surface-border)', paddingTop: '16px' }}>
-            <div className="vela-label" style={{ marginBottom: '16px' }}>Historical Capability Matrix</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-              <div>
-                {rankedNations.slice(0, 5).map(([nation, total], i) => (
-                  <div key={nation} style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '8px 12px',
-                    background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
-                    borderRadius: '4px',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontFamily: 'var(--font-data)', fontSize: '10px', color: 'rgba(255,255,255,0.3)', width: '18px' }}>
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <span style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.8)' }}>
-                        {nation}
-                      </span>
-                    </div>
-                    <span style={{ fontFamily: 'var(--font-data)', fontSize: '13px', fontWeight: 600, color: 'var(--accent-primary)' }}>
-                      {total.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
+            <div className="vela-label" style={{ marginBottom: '12px' }}>Historical Capability Matrix</div>
+            {rankedNations.slice(0, 7).map(([nation, total], i) => (
+              <div key={nation} style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '8px 12px',
+                background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent',
+                borderRadius: '4px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontFamily: 'var(--font-data)', fontSize: '10px', color: 'rgba(255,255,255,0.3)', width: '18px' }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.8)' }}>
+                    {nation}
+                  </span>
+                </div>
+                <span style={{ fontFamily: 'var(--font-data)', fontSize: '13px', fontWeight: 600, color: NATION_COLORS[nation] || 'var(--accent-primary)' }}>
+                  {total.toLocaleString()}
+                </span>
               </div>
-              
-              {/* Radial Launch Diagram */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                <svg width="200" height="200" viewBox="-100 -100 200 200">
-                  <circle cx="0" cy="0" r="20" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
-                  <circle cx="0" cy="0" r="50" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" strokeDasharray="2 4" />
-                  <circle cx="0" cy="0" r="80" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" strokeDasharray="2 4" />
-                  <text x="0" y="4" fontSize="8" fill="rgba(255,255,255,0.4)" textAnchor="middle" fontFamily="var(--font-ui)">UCS</text>
-                  
-                  {rankedNations.slice(0, 5).map(([nation, sum], i) => {
-                    const angle = (i * (360 / 5) - 90) * (Math.PI / 180);
-                    // R goes from 20 to 90 depending on log total
-                    const r = 20 + Math.max(0, Math.log10(sum) / 4) * 70;
-                    const c = NATION_COLORS[nation] || '#fff';
-                    const x = Math.cos(angle) * r;
-                    const y = Math.sin(angle) * r;
-                    return (
-                      <g key={nation}>
-                        <line x1={Math.cos(angle)*20} y1={Math.sin(angle)*20} x2={x} y2={y} stroke={c} strokeWidth="6" strokeOpacity="0.8" strokeLinecap="round" />
-                        <circle cx={x} cy={y} r="3" fill="#fff" />
-                        <text x={Math.cos(angle)*(r+14)} y={Math.sin(angle)*(r+14)+3} fontSize="9" fill="rgba(255,255,255,0.7)" textAnchor="middle" fontFamily="var(--font-ui)">{nation}</text>
-                      </g>
-                    );
-                  })}
-                </svg>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* Right — Commercial vs Government */}
+        {/* Right Column — Commercialization + UCS */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
 
-          {/* Commercial ratio over time */}
-          {data.ucs_applied && cgChartData.length > 0 && (
-            <div className="vela-panel">
-              <div className="vela-label" style={{ marginBottom: '16px' }}>
-                Commercial vs. Government Classification
-              </div>
-              <div style={{ height: '240px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={cgChartData} margin={{ top: 5, right: 16, left: 0, bottom: 5 }}>
-                    <XAxis dataKey="year" stroke="rgba(255,255,255,0.1)"
-                      tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} minTickGap={40} />
-                    <YAxis stroke="rgba(255,255,255,0.1)"
-                      tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} />
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                    <Tooltip contentStyle={tooltipStyle} />
-                    <Legend />
-                    <Line type="monotone" dataKey="Commercial" stroke="#10B981" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="Government" stroke="#6366F1" strokeWidth={2} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+          {/* Commercialization Ratio Line Chart */}
+          <div className="vela-panel">
+            <div className="vela-label" style={{ marginBottom: '16px' }}>
+              Commercial Share of Orbital Launches by Decade
             </div>
-          )}
-
-          {!data.ucs_applied && (
-            <div className="vela-panel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '200px' }}>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', textAlign: 'center' }}>
-                Classification data incomplete.<br />
-                Awaiting UCS Database integration.
-              </div>
+            <div style={{ height: '220px' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={COMMERCIALIZATION_DECADES} margin={{ top: 5, right: 16, left: -10, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="gradComm" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="decade" stroke="rgba(255,255,255,0.1)"
+                    tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} />
+                  <YAxis domain={[0, 60]} stroke="rgba(255,255,255,0.1)"
+                    tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }}
+                    tickFormatter={(v) => `${v}%`}
+                    ticks={[0, 10, 20, 30, 40, 50, 60]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <ReferenceLine y={50} stroke="var(--accent-warning)" strokeDasharray="6 4" strokeWidth={1.5}
+                    label={{ value: 'PARITY THRESHOLD', position: 'right', fill: 'var(--accent-warning)', fontSize: 9, fontWeight: 600 }} />
+                  <Tooltip contentStyle={tooltipStyle} formatter={(v) => [`${v}%`, 'Commercial Share']} />
+                  <Area type="monotone" dataKey="share" stroke="#3B82F6" strokeWidth={2}
+                    fill="url(#gradComm)" dot={{ r: 3, fill: '#3B82F6', stroke: '#fff', strokeWidth: 1 }} />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
-          )}
+            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontStyle: 'italic', marginTop: '8px' }}>
+              Data: UCS Satellite Database · GCAT crosswalk
+            </div>
+          </div>
 
-          {/* Active Payload Breakdown */}
-          {data.ucs_applied && (
-            <div className="vela-panel">
-              <div className="vela-label" style={{ marginBottom: '16px' }}>
-                Active Satellite Operators (UCS)
-              </div>
-              {[
-                { label: 'Commercial', pct: 80.4, color: '#3B82F6' },
-                { label: 'Government', pct: 7.4, color: '#10B981' },
-                { label: 'Military', pct: 6.1, color: '#EF4444' },
-                { label: 'Civil', pct: 2.1, color: '#6366F1' },
-                { label: 'Mixed', pct: 4.0, color: 'rgba(255,255,255,0.4)' },
-              ].map(item => (
-                <div key={item.label} style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>{item.label}</span>
-                    <span style={{ fontSize: '11px', fontFamily: 'var(--font-data)', color: item.color, fontWeight: 600 }}>
-                      {item.pct}%
-                    </span>
-                  </div>
-                  <div style={{ height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px' }}>
-                    <div style={{
-                      height: '100%', width: `${item.pct}%`,
-                      background: item.color, borderRadius: '2px',
-                      transition: 'width 600ms cubic-bezier(0.16,1,0.3,1)',
-                    }} />
-                  </div>
+          {/* Active Satellite Operators — UCS */}
+          <div className="vela-panel">
+            <div className="vela-label" style={{ marginBottom: '16px' }}>
+              Active Satellite Operators · UCS Database
+            </div>
+            {[
+              { label: 'Commercial', pct: 80.4, color: '#3B82F6' },
+              { label: 'Government', pct: 7.4, color: '#6366F1' },
+              { label: 'Military', pct: 6.1, color: '#EF4444' },
+              { label: 'Civil', pct: 2.1, color: '#10B981' },
+              { label: 'Mixed', pct: 4.0, color: 'rgba(255,255,255,0.3)' },
+            ].map(item => (
+              <div key={item.label} style={{ marginBottom: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)' }}>{item.label}</span>
+                  <span style={{ fontSize: '12px', fontFamily: 'var(--font-data)', color: item.color, fontWeight: 600 }}>
+                    {item.pct}%
+                  </span>
                 </div>
-              ))}
-              <div style={{
-                marginTop: '16px', fontSize: '10px',
-                fontFamily: 'var(--font-data)', color: 'rgba(255,255,255,0.25)',
-              }}>
-                Source: UCS Satellite Database · 7,560 active satellites · 99.92% join rate
+                <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px' }}>
+                  <div style={{
+                    height: '100%', width: `${item.pct}%`,
+                    background: item.color, borderRadius: '3px',
+                    transition: 'width 800ms cubic-bezier(0.16,1,0.3,1)',
+                  }} />
+                </div>
               </div>
+            ))}
+            <div style={{
+              marginTop: '16px', fontSize: '10px',
+              fontFamily: 'var(--font-data)', color: 'rgba(255,255,255,0.25)',
+            }}>
+              Source: UCS Satellite Database · 7,560 active satellites · 99.92% join rate
             </div>
-          )}
+          </div>
+
+          {/* Key Nation Callouts */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+            <NationCard flag="🇺🇸" nation="USA" launches="2,276" color="#3B82F6" />
+            <NationCard flag="🇷🇺" nation="Russia/USSR" launches="3,099" sub="2,227 SU + 872 RU" color="#EF4444" />
+            <NationCard flag="🇨🇳" nation="China" launches="726" color="#F59E0B" />
+          </div>
         </div>
       </div>
 
+      {/* Attribution */}
       <div style={{
         marginTop: '24px', fontSize: '10px', color: 'rgba(255,255,255,0.25)',
         textAlign: 'center', fontFamily: 'var(--font-data)',
@@ -306,13 +309,36 @@ function MetricCell({ label, value, divider }) {
       borderLeft: divider ? '1px solid var(--surface-border)' : 'none',
     }}>
       <div style={{
-        fontFamily: 'var(--font-data)', fontSize: '28px',
-        fontWeight: 700, color: 'rgba(255,255,255,0.87)',
+        fontFamily: 'var(--font-data)', fontSize: '36px',
+        fontWeight: 700, color: 'rgba(255,255,255,0.9)',
         letterSpacing: '-0.02em',
       }}>
         {value}
       </div>
-      <div className="vela-label" style={{ marginTop: '4px' }}>{label}</div>
+      <div className="vela-label" style={{ marginTop: '8px' }}>{label}</div>
+    </div>
+  );
+}
+
+function NationCard({ flag, nation, launches, sub, color }) {
+  return (
+    <div style={{
+      background: 'var(--surface-raised)', border: '1px solid var(--surface-border)',
+      borderRadius: '8px', padding: '16px', textAlign: 'center',
+      borderTop: `2px solid ${color}`,
+    }}>
+      <div style={{ fontSize: '24px', marginBottom: '8px' }}>{flag}</div>
+      <div style={{ fontFamily: 'var(--font-data)', fontSize: '20px', fontWeight: 700, color, letterSpacing: '-0.02em' }}>
+        {launches}
+      </div>
+      <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', marginTop: '4px' }}>
+        {nation}
+      </div>
+      {sub && (
+        <div style={{ fontSize: '9px', color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-data)', marginTop: '2px' }}>
+          {sub}
+        </div>
+      )}
     </div>
   );
 }

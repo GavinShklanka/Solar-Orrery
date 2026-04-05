@@ -12,8 +12,19 @@
   --accent-primary: #3B82F6;
   --accent-secondary: #6366F1;
   --accent-warning: #F59E0B;
+  --accent-primary-dim: rgba(59,130,246,0.08);
+  --accent-primary-glow: rgba(59,130,246,0.12);
   --status-critical: #EF4444;
   --status-safe: #10B981;
+
+  /* Kp geomagnetic scale palette */
+  --kp-quiet: #10B981;
+  --kp-unsettled: #22D3EE;
+  --kp-active: #F59E0B;
+  --kp-minor-storm: #F97316;
+  --kp-major-storm: #EF4444;
+  --kp-severe: #DC2626;
+  --kp-extreme: #991B1B;
 
   --font-ui: 'Inter', -apple-system, sans-serif;
   --font-data: 'JetBrains Mono', 'Fira Code', monospace;

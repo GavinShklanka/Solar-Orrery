@@ -2,7 +2,7 @@
 NEO routes — Close approach calendar and Sentry impact probabilities.
 """
 from fastapi import APIRouter, HTTPException
-from api.state import scheduler
+from state import scheduler
 
 router = APIRouter()
 
