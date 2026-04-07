@@ -17,6 +17,8 @@ import {
   ResponsiveContainer, LineChart, Line, ReferenceLine,
   Legend,
 } from 'recharts';
+import { IS_STATIC } from '../../hooks/useAPI';
+import { DEMO_GEOPOLITICAL } from '../../data/demoData';
 
 const NATION_COLORS = {
   USA: '#3B82F6',
@@ -48,11 +50,12 @@ const tooltipStyle = {
 };
 
 export default function GeopoliticalMap() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState(IS_STATIC ? DEMO_GEOPOLITICAL : null);
+  const [loading, setLoading] = useState(!IS_STATIC);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (IS_STATIC) return; // Demo data already set
     fetch('/api/v1/geopolitical/nations')
       .then(res => {
         if (!res.ok) throw new Error('API Error');
@@ -64,6 +67,8 @@ export default function GeopoliticalMap() {
         setLoading(false);
       })
       .catch(err => {
+        // Fall back to demo data on error
+        setData(DEMO_GEOPOLITICAL);
         setError(err.message);
         setLoading(false);
       });
@@ -110,7 +115,7 @@ export default function GeopoliticalMap() {
     return <div style={{ color: 'var(--accent-primary)', padding: '24px', fontFamily: 'var(--font-data)', fontSize: '12px' }}>Loading geopolitical intelligence crosswalk...</div>;
   }
 
-  if (error || !data?.nations_series) {
+  if (!data?.nations_series) {
     return (
       <div style={{ padding: '24px', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
         <div style={{ fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px' }}>Geopolitical Intelligence</div>

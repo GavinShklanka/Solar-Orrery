@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Globe, Zap, TrendingUp, Rocket, BarChart2, Crosshair } from 'lucide-react';
+import { IS_STATIC } from './hooks/useAPI';
 
 // Views
 import OrbitalView from './components/Globe/Globe';
@@ -77,10 +78,25 @@ export default function App() {
         <div style={{ padding: '24px 20px', borderTop: '1px solid var(--surface-border)' }}>
           <div className="vela-label" style={{ marginBottom: '4px' }}>SYSTEM STATUS</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div className="live-pulse" />
-            <span style={{ fontFamily: 'var(--font-data)', fontSize: '11px', color: 'var(--status-critical)' }}>
-              LIVE
-            </span>
+            {IS_STATIC ? (
+              <>
+                <div style={{
+                  width: '8px', height: '8px', borderRadius: '50%',
+                  background: 'var(--accent-warning)',
+                  boxShadow: '0 0 6px var(--accent-warning)',
+                }} />
+                <span style={{ fontFamily: 'var(--font-data)', fontSize: '11px', color: 'var(--accent-warning)' }}>
+                  DEMO DATA
+                </span>
+              </>
+            ) : (
+              <>
+                <div className="live-pulse" />
+                <span style={{ fontFamily: 'var(--font-data)', fontSize: '11px', color: 'var(--status-critical)' }}>
+                  LIVE
+                </span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -95,6 +111,21 @@ export default function App() {
             <div style={{ fontFamily: 'var(--font-data)', fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>
               MERIDIAN V2
             </div>
+            {IS_STATIC && (
+              <span style={{ 
+                fontSize: '9px', 
+                color: 'var(--accent-warning)', 
+                letterSpacing: '0.1em',
+                marginLeft: '12px',
+                padding: '2px 8px',
+                border: '1px solid rgba(245,158,11,0.3)',
+                borderRadius: '3px',
+                fontFamily: 'var(--font-data)',
+                fontWeight: 600,
+              }}>
+                DEMO DATA
+              </span>
+            )}
           </div>
           
           <div style={{ fontFamily: 'var(--font-data)', fontSize: '12px', color: 'rgba(255,255,255,0.8)' }}>
