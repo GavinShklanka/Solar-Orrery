@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   // GitHub Pages: serves from /repo-name/ subdirectory
-  base: '/vela-space-analytics/',
+  base: '/Solar-Orrery/',
   build: {
     target: 'esnext',
     rollupOptions: {
